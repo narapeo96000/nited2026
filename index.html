@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ระบบนิเทศออนไลน์ จังหวัดนราธิวาส | Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:,">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Sarabun', sans-serif; color: #1f2937; background: #eef2f5; min-height: 100vh; }
+    .hero {
+      background: linear-gradient(135deg, #041e17 0%, #0f766e 55%, #059669 100%);
+      color: #fff; padding: 44px 20px 90px; text-align: center; position: relative;
+    }
+    .hero .badge { display:inline-block; background: rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); padding:6px 16px; border-radius:999px; font-size:.85rem; letter-spacing:.5px; margin-bottom:14px; }
+    .hero h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+    .hero p { font-size: 1.02rem; opacity:.92; max-width: 680px; margin: 0 auto; }
+    .wrap { max-width: 1080px; margin: -52px auto 40px; padding: 0 16px; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .stat {
+      background:#fff; border-radius:16px; padding:18px 16px; text-align:center;
+      box-shadow: 0 8px 24px rgba(15,23,42,.08); border-top:4px solid var(--c, #0f766e);
+    }
+    .stat .num { font-size: 1.9rem; font-weight: 700; color: var(--c, #0f766e); line-height:1.1; }
+    .stat .lbl { margin-top:4px; font-size:.92rem; color:#6b7280; }
+    .section-title { display:flex; align-items:center; gap:10px; margin:34px 0 14px; font-size:1.15rem; font-weight:600; color:#111827; }
+    .section-title::before { content:''; width:6px; height:22px; border-radius:4px; background:#0f766e; }
+    .sysgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .card {
+      background:#fff; border-radius:18px; padding:22px; box-shadow:0 8px 24px rgba(15,23,42,.07);
+      display:flex; flex-direction:column; gap:10px; text-decoration:none; color:inherit;
+      transition: transform .15s ease, box-shadow .15s ease; border:2px solid transparent;
+    }
+    a.card:hover { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(15,23,42,.14); }
+    .card .ic { width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#fff; }
+    .card .tt { font-size:1.1rem; font-weight:700; }
+    .card .ds { font-size:.9rem; color:#6b7280; flex:1; }
+    .card .go { font-size:.9rem; font-weight:600; color:var(--c); }
+    .soonsmall { font-size:.82rem; color:#b45309; background:#fff7ed; border:1px solid #fdba74; border-radius:999px; padding:2px 10px; display:inline-block; width:fit-content; }
+    .meta { margin-top:20px; font-size:.88rem; color:#6b7280; background:#fff; border-radius:16px; padding:16px 18px; box-shadow:0 8px 24px rgba(15,23,42,.05); line-height:1.7; }
+    .meta b { color:#111827; }
+    .meta .row { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    footer { text-align:center; padding: 26px 16px 34px; color:#6b7280; font-size:.85rem; line-height:1.8; }
+    .foot-bar { background:#fff; color:#9ca3af; padding:18px 16px; text-align:center; font-size:.8rem; border-top:1px solid #e5e7eb; }
+    @media (max-width: 760px) {
+      .hero h1 { font-size:1.5rem; }
+      .stats { grid-template-columns: 1fr; }
+      .sysgrid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="badge">สำนักงานศึกษาธิการจังหวัดนราธิวาส</div>
+    <h1>ระบบนิเทศออนไลน์ จังหวัดนราธิวาส</h1>
+    <p>ศูนย์กลางการนิเทศเพื่อนวดใหม่และยกระดับคุณภาพสถานศึกษา ทั้งสถาบันปอเนาะ ศูนย์ตาดีกา และโรงเรียนเอกชน</p>
+  </div>
+
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat" style="--c:#0f766e;"><div class="num" id="st_centers">—</div><div class="lbl">ศูนย์ปอเนาะ + ตาดีกา (แห่ง)</div></div>
+      <div class="stat" style="--c:#059669;"><div class="num" id="st_evals">—</div><div class="lbl">ผลการนิเทศที่บันทึก (ครั้ง)</div></div>
+      <div class="stat" style="--c:#d97706;"><div class="num" id="st_users">—</div><div class="lbl">ผู้ใช้ระบบ (คน)</div></div>
+    </div>
+
+    <div class="section-title">เข้าสู่ระบบนิเทศ</div>
+    <div class="sysgrid">
+      <a class="card" href="https://narapeo96000.github.io/nitedpondok2026/" target="_blank" rel="noopener" style="--c:#0f766e;">
+        <span class="ic" style="background:#0f766e;">🕌</span>
+        <span class="tt">ระบบนิเทศสถาบันปอเนาะ</span>
+        <span class="ds">นิเทศ 7 ฉบับ · 3 รอบต่อปี — สำรวจ วางแผน สังเกตชั้น ติดตาม และสะท้อนผลด้วย AI (7 ฉบับ/รอบ)</span>
+        <span class="go">เข้าสู่ระบบปอเนาะ →</span>
+      </a>
+      <a class="card" href="https://narapeo96000.github.io/nitedtadika2026/" target="_blank" rel="noopener" style="--c:#059669;">
+        <span class="ic" style="background:#059669;">🕌</span>
+        <span class="tt">ระบบนิเทศตาดีกา/ศอม.</span>
+        <span class="ds">ประเมิน 5 แบบฟอร์ม 150 คะแนน — หลักสูตร การจัดการเรียนรู้ วัดผลผู้เรียน และสรุปผลรายศูนย์</span>
+        <span class="go">เข้าสู่ระบบตาดีกา →</span>
+      </a>
+      <div class="card" style="--c:#d97706; opacity:.85; cursor:default; border-color:#fde68a; background:#fffbeb;">
+        <span class="ic" style="background:#d97706;">🏫</span>
+        <span class="tt">ระบบนิเทศโรงเรียนเอกชน</span>
+        <span class="ds">อยู่ระหว่างพัฒนา — จะรองรับการนิเทศทั้งโรงเรียนในระบบ/นอกระบบ และโรงเรียนเอกชนสอนศาสนาอิสลาม</span>
+        <span class="soonsmall">เร็ว ๆ นี้</span>
+      </div>
+    </div>
+
+    <div class="section-title">สรุปสถานภาพระบบ</div>
+    <div class="meta">
+      <div class="row">
+        <div><b>สถาบันปอเนาะ</b><br><span id="metaPondok">—</span></div>
+        <div><b>ศูนย์ตาดีกา/ศอม.</b><br><span id="metaTadika">—</span></div>
+        <div><b>การนิเทศ</b><br><span id="metaEvals">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot-bar">ระบบนิเทศออนไลน์ จ.นราธิวาส · ปอเนาะ | ตาดีกา/ศอม. | โรงเรียนเอกชน</div>
+  <footer>
+    ข้อมูลจากฐานข้อมูลระบบนิเทศตาดีกา และระบบนิเทศปอเนาะ (อัปเดตอัตโนมัติ)<br>
+    ติดต่อผู้ดูแลระบบสำหรับการเข้าใช้งานทั้งหมด
+  </footer>
+
+  <script>
+    const API = {
+      pondok: 'https://script.google.com/macros/s/AKfycbzon0T2E0dxsoZH4NoiKFAFr-jiNgV9e_zpynCm5k0gDErNQSUgIJY2tI5pyp4g0S41/exec',
+      tadika: 'https://script.google.com/macros/s/AKfycbxnmbY96u9qCj0dBzPBJK9glPlcibkDkD1r4p1i6tW9vkoAotX0LVpCHE-1-guglsCohw/exec'
+    };
+    function num(x) { x = Number(x); return isNaN(x) ? '—' : x.toLocaleString('th-TH'); }
+    function post(url, action) {
+      return fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action }) })
+        .then(r => r.ok ? r.json() : Promise.reject('HTTP ' + r.status));
+    }
+    function fill(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; }
+
+    (async function boot() {
+      try {
+        const [p, t] = await Promise.all([post(API.pondok, 'getStatsPondok'), post(API.tadika, 'getStats')]);
+        const porz = p.success && p.data ? p.data : {};
+        const tdz = t.success && t.data ? t.data : {};
+
+        const pondokN = Number(porz.totalPondok) || 0;
+        const tadikaN = Number(tdz.tkTotal) || Number(tdz.totalTadika) || 0;
+        const evalN = (Number(porz.totalEval) || 0) + (Number(tdz.totalEval) || 0);
+        const userN = (Number(porz.totalUsers) || 0) + (Number(tdz.totalUsers) || 0);
+
+        fill('st_centers', num(pondokN + tadikaN));
+        fill('st_evals', num(evalN));
+        fill('st_users', num(userN));
+
+        const pStu = Number(porz.students) || 0, pStaff = Number(porz.staff) || 0;
+        const tStu = tdz.tkStudents && typeof tdz.tkStudents === 'object' ? Number(tdz.tkStudents.total || 0) : Number(tdz.tkStudents) || 0;
+        const tTea = tdz.tkTeachers && typeof tdz.tkTeachers === 'object' ? Number(tdz.tkTeachers.total || 0) : Number(tdz.tkTeachers) || 0;
+
+        fill('metaPondok', 'ทั้งหมด ' + num(pondokN) + ' แห่ง · บุคลากร ' + num(pStaff) + ' คน · ผู้เรียน ' + num(pStu) + ' คน');
+        fill('metaTadika', 'ทั้งหมด ' + num(tadikaN) + ' แห่ง · ครู ' + num(tTea) + ' คน · ผู้เรียน ' + num(tStu) + ' คน');
+        fill('metaEvals', 'ปอเนาะ ' + num(porz.totalEval) + ' ครั้ง · ตาดีกา ' + num(tdz.totalEval) + ' ครั้ง รวม ' + num(evalN) + ' ครั้ง');
+      } catch (e) {
+        fill('st_centers', '—');
+        fill('st_evals', '—');
+        fill('st_users', '—');
+        fill('metaPondok', 'ไม่สามารถโหลดสถิติได้ในขณะนี้');
+        fill('metaTadika', 'ไม่สามารถโหลดสถิติได้ในขณะนี้');
+        fill('metaEvals', '—');
+      }
+    })();
+  </script>
+</body>
+</html>
