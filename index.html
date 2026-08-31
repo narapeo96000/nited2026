@@ -27,6 +27,8 @@
     }
     .stat .num { font-size: 1.9rem; font-weight: 700; color: var(--c, #0f766e); line-height:1.1; }
     .stat .lbl { margin-top:4px; font-size:.92rem; color:#6b7280; }
+    .stats-foot { display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:12px; font-size:.83rem; color:#7c8591; }
+    .stats-foot a { color:#0f766e; font-weight:600; text-decoration:none; cursor:pointer; }
     .section-title { display:flex; align-items:center; gap:10px; margin:34px 0 14px; font-size:1.15rem; font-weight:600; color:#111827; }
     .section-title::before { content:''; width:6px; height:22px; border-radius:4px; background:#0f766e; flex:none; }
     .sysgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
@@ -70,6 +72,7 @@
       <div class="stat" style="--c:#059669;"><div class="num" id="st_evals">—</div><div class="lbl">ผลการนิเทศที่บันทึก (ครั้ง)</div></div>
       <div class="stat" style="--c:#d97706;"><div class="num" id="st_users">—</div><div class="lbl">ผู้ใช้ระบบ (คน)</div></div>
     </div>
+    <div class="stats-foot">อัปเดตล่าสุด: <span id="statsTime">…</span> · <a onclick="loadStats()">↻ โหลดสถิติใหม่</a></div>
 
     <div class="section-title">เข้าสู่ระบบนิเทศ</div>
     <div class="sysgrid">
@@ -115,43 +118,56 @@
       tadika: 'https://script.google.com/macros/s/AKfycbxnmbY96u9qCj0dBzPBJK9glPlcibkDkD1r4p1i6tW9vkoAotX0LVpCHE-1-guglsCohw/exec'
     };
     function num(x) { x = Number(x); return isNaN(x) ? '—' : x.toLocaleString('th-TH'); }
-    function post(url, action) {
-      return fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action }) })
-        .then(r => r.ok ? r.json() : Promise.reject('HTTP ' + r.status));
+    async function post(url, action) {
+      for (let i = 0; i < 2; i++) {
+        try {
+          const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action }) });
+          if (r.ok) return r.json();
+        } catch (e) {}
+      }
+      return null;
     }
     function fill(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; }
 
-    (async function boot() {
-      try {
-        const [p, t] = await Promise.all([post(API.pondok, 'getStatsPondok'), post(API.tadika, 'getStats')]);
-        const porz = p.success && p.data ? p.data : {};
-        const tdz = t.success && t.data ? t.data : {};
+    async function loadStats() {
+      fill('statsTime', new Date().toLocaleTimeString('th-TH'));
+      const [p, t] = await Promise.all([post(API.pondok, 'getStatsPondok'), post(API.tadika, 'getStats')]);
+      const porz = p && p.success && p.data ? p.data : null;
+      const tdz = t && t.success && t.data ? t.data : null;
 
-        const pondokN = Number(porz.totalPondok) || 0;
-        const tadikaN = Number(tdz.tkTotal) || Number(tdz.totalTadika) || 0;
-        const evalN = (Number(porz.totalEval) || 0) + (Number(tdz.totalEval) || 0);
-        const userN = (Number(porz.totalUsers) || 0) + (Number(tdz.totalUsers) || 0);
+      if (!porz && !tdz) {
+        fill('st_centers', '—'); fill('st_evals', '—'); fill('st_users', '—');
+        fill('metaPondok', 'ไม่สามารถโหลดสถิติปอเนาะได้'); fill('metaTadika', 'ไม่สามารถโหลดสถิติตาดีกาได้'); fill('metaEvals', '—');
+        return;
+      }
 
-        fill('st_centers', num(pondokN + tadikaN));
-        fill('st_evals', num(evalN));
-        fill('st_users', num(userN));
+      const pondokN = porz ? (Number(porz.totalPondok) || 0) : null;
+      const tadikaN = tdz ? (Number(tdz.tkTotal) || Number(tdz.totalTadika) || 0) : null;
+      const pEval = porz ? (Number(porz.totalEval) || 0) : 0;
+      const tEval = tdz ? (Number(tdz.totalEval) || 0) : 0;
+      const userN = (porz ? (Number(porz.totalUsers) || 0) : 0) + (tdz ? (Number(tdz.totalUsers) || 0) : 0);
 
+      fill('st_centers', (pondokN === null || tadikaN === null) ? '—' : num(pondokN + tadikaN));
+      fill('st_evals', num(pEval + tEval));
+      fill('st_users', num(userN));
+
+      if (porz) {
         const pStu = Number(porz.students) || 0, pStaff = Number(porz.staff) || 0;
+        fill('metaPondok', 'ทั้งหมด ' + num(pondokN) + ' แห่ง · บุคลากร ' + num(pStaff) + ' คน · ผู้เรียน ' + num(pStu) + ' คน');
+      } else {
+        fill('metaPondok', 'ไม่สามารถโหลดสถิติปอเนาะได้');
+      }
+      if (tdz) {
         const tStu = tdz.tkStudents && typeof tdz.tkStudents === 'object' ? Number(tdz.tkStudents.total || 0) : Number(tdz.tkStudents) || 0;
         const tTea = tdz.tkTeachers && typeof tdz.tkTeachers === 'object' ? Number(tdz.tkTeachers.total || 0) : Number(tdz.tkTeachers) || 0;
-
-        fill('metaPondok', 'ทั้งหมด ' + num(pondokN) + ' แห่ง · บุคลากร ' + num(pStaff) + ' คน · ผู้เรียน ' + num(pStu) + ' คน');
         fill('metaTadika', 'ทั้งหมด ' + num(tadikaN) + ' แห่ง · ครู ' + num(tTea) + ' คน · ผู้เรียน ' + num(tStu) + ' คน');
-        fill('metaEvals', 'ปอเนาะ ' + num(porz.totalEval) + ' ครั้ง · ตาดีกา ' + num(tdz.totalEval) + ' ครั้ง รวม ' + num(evalN) + ' ครั้ง');
-      } catch (e) {
-        fill('st_centers', '—');
-        fill('st_evals', '—');
-        fill('st_users', '—');
-        fill('metaPondok', 'ไม่สามารถโหลดสถิติได้ในขณะนี้');
-        fill('metaTadika', 'ไม่สามารถโหลดสถิติได้ในขณะนี้');
-        fill('metaEvals', '—');
+      } else {
+        fill('metaTadika', 'ไม่สามารถโหลดสถิติตาดีกาได้');
       }
-    })();
+      fill('metaEvals', 'ปอเนาะ ' + num(pEval) + ' ครั้ง · ตาดีกา ' + num(tEval) + ' ครั้ง รวม ' + num(pEval + tEval) + ' ครั้ง');
+    }
+
+    (async function boot() { await loadStats(); })();
   </script>
 </body>
 </html>
