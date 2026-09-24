@@ -72,9 +72,9 @@
 
   <div class="wrap">
     <div class="stats">
-      <div class="stat" style="--c:#0f766e;"><div class="num" id="st_centers">—</div><div class="lbl">ศูนย์ปอเนาะ + ตาดีกา</div><div class="sub" id="st_centers_dtl">—</div></div>
-      <div class="stat" style="--c:#059669;"><div class="num" id="st_evals">—</div><div class="lbl">ผลการนิเทศที่บันทึก (ครั้ง)</div></div>
-      <div class="stat" style="--c:#d97706;"><div class="num" id="st_users">—</div><div class="lbl">ผู้ใช้ระบบ (คน)</div></div>
+      <div class="stat" style="--c:#0f766e;"><div class="num" id="st_centers">—</div><div class="lbl">จำนวน ปอเนาะ + ตาดีกา</div><div class="sub" id="st_centers_dtl">—</div></div>
+      <div class="stat" style="--c:#059669;"><div class="num" id="st_private">—</div><div class="lbl">จำนวน รร.เอกชน</div><div class="sub" id="st_private_dtl">—</div></div>
+      <div class="stat" style="--c:#d97706;"><div class="num" id="st_evals">—</div><div class="lbl">จำนวน ครั้งที่นิเทศ</div><div class="sub" id="st_evals_dtl">—</div></div>
     </div>
     <div class="stats-foot">อัปเดตล่าสุด: <span id="statsTime">…</span> · <a onclick="loadStats()">↻ โหลดสถิติใหม่</a></div>
 
@@ -82,19 +82,19 @@
     <div class="sysgrid">
       <a class="card" href="https://narapeo96000.github.io/nitedpondok2026/" target="_blank" rel="noopener" style="--c:#0f766e;">
         <span class="ic" style="background:#0f766e;">🕌</span>
-        <span class="tt">ระบบนิเทศสถาบันปอเนาะ</span>
+        <span class="tt">นิเทศสถาบันปอเนาะ</span>
         <span class="ds">นิเทศ 7 ฉบับ · 3 รอบต่อปี — สำรวจ วางแผน สังเกตชั้น ติดตาม และสะท้อนผลด้วย AI (7 ฉบับ/รอบ)</span>
         <span class="go">เข้าสู่ระบบปอเนาะ →</span>
       </a>
       <a class="card" href="https://narapeo96000.github.io/nitedtadika2026/" target="_blank" rel="noopener" style="--c:#059669;">
         <span class="ic" style="background:#059669;">🕌</span>
-        <span class="tt">ระบบนิเทศตาดีกา/ศอม.</span>
+        <span class="tt">นิเทศตาดีกา/ศอม.</span>
         <span class="ds">ประเมิน 5 แบบฟอร์ม 150 คะแนน — หลักสูตร การจัดการเรียนรู้ วัดผลผู้เรียน และสรุปผลรายศูนย์</span>
         <span class="go">เข้าสู่ระบบตาดีกา →</span>
       </a>
       <a class="card" style="--c:#d97706;" href="https://narapeo96000.github.io/nitedopec2026/" target="_blank">
         <span class="ic" style="background:#d97706;">🏫</span>
-        <span class="tt">ระบบนิเทศโรงเรียนเอกชน</span>
+        <span class="tt">นิเทศโรงเรียนเอกชน</span>
         <span class="ds">นิเทศ ติดตาม และตรวจเยี่ยมสถานศึกษาเอกชนในระบบ จ.นราธิวาส</span>
         <span class="go">เข้าสู่ระบบโรงเรียนเอกชน →</span>
       </a>
@@ -119,7 +119,8 @@
   <script>
     const API = {
       pondok: 'https://script.google.com/macros/s/AKfycbzon0T2E0dxsoZH4NoiKFAFr-jiNgV9e_zpynCm5k0gDErNQSUgIJY2tI5pyp4g0S41/exec',
-      tadika: 'https://script.google.com/macros/s/AKfycbxnmbY96u9qCj0dBzPBJK9glPlcibkDkD1r4p1i6tW9vkoAotX0LVpCHE-1-guglsCohw/exec'
+      tadika: 'https://script.google.com/macros/s/AKfycbxnmbY96u9qCj0dBzPBJK9glPlcibkDkD1r4p1i6tW9vkoAotX0LVpCHE-1-guglsCohw/exec',
+      privateSchool: 'https://script.google.com/macros/s/AKfycbzOIsAXOkPAL44dOA8KFxZE7WI3TCtS0ceyswLovl3xpzIfZn6O3wr8lou7FLeHw4Ym3Q/exec'
     };
     function num(x) { x = Number(x); return isNaN(x) ? '—' : x.toLocaleString('th-TH'); }
     async function post(url, action) {
@@ -135,12 +136,13 @@
 
     async function loadStats() {
       fill('statsTime', new Date().toLocaleTimeString('th-TH'));
-      const [p, t] = await Promise.all([post(API.pondok, 'getStatsPondok'), post(API.tadika, 'getStats')]);
+      const [p, t, s] = await Promise.all([post(API.pondok, 'getStatsPondok'), post(API.tadika, 'getStats'), post(API.privateSchool, 'getStatsPublic')]);
       const porz = p && p.success && p.data ? p.data : null;
       const tdz = t && t.success && t.data ? t.data : null;
+      const prv = s && s.success && s.data ? s.data : null;
 
-      if (!porz && !tdz) {
-        fill('st_centers', '—'); fill('st_centers_dtl', '—'); fill('st_evals', '—'); fill('st_users', '—');
+      if (!porz && !tdz && !prv) {
+        fill('st_centers', '—'); fill('st_centers_dtl', '—'); fill('st_private', '—'); fill('st_private_dtl', '—'); fill('st_evals', '—'); fill('st_evals_dtl', '—');
         fill('metaPondok', 'ไม่สามารถโหลดสถิติปอเนาะได้'); fill('metaTadika', 'ไม่สามารถโหลดสถิติตาดีกาได้'); fill('metaEvals', '—');
         return;
       }
@@ -149,12 +151,15 @@
       const tadikaN = tdz ? (Number(tdz.tkTotal) || Number(tdz.totalTadika) || 0) : null;
       const pEval = porz ? (Number(porz.totalEval) || 0) : 0;
       const tEval = tdz ? (Number(tdz.totalEval) || 0) : 0;
-      const userN = (porz ? (Number(porz.totalUsers) || 0) : 0) + (tdz ? (Number(tdz.totalUsers) || 0) : 0);
+      const schoolN = prv ? (Number(prv.totalSchools) || 0) : null;
+      const schoolEval = prv ? (Number(prv.totalEval) || 0) : 0;
 
       fill('st_centers', (pondokN === null || tadikaN === null) ? '—' : num(pondokN + tadikaN) + ' แห่ง');
       fill('st_centers_dtl', (pondokN === null || tadikaN === null) ? '—' : num(pondokN) + ' ปอเนาะ + ' + num(tadikaN) + ' ตาดีกา');
-      fill('st_evals', num(pEval + tEval));
-      fill('st_users', num(userN));
+      fill('st_private', schoolN === null ? '—' : num(schoolN) + ' แห่ง');
+      fill('st_private_dtl', prv ? 'สามัญศึกษา ' + num(prv.typeCount && prv.typeCount['แบบสอนสามัญ'] || 0) + ' · อิสลามควบคู่สามัญ ' + num(prv.typeCount && prv.typeCount['แบบสอนสามัญควบคู่ศาสนาอิสลาม'] || 0) + ' · การศึกษาสงเคราะห์ ' + num(prv.typeCount && prv.typeCount['การศึกษาสงเคราะห์'] || 0) : '—');
+      fill('st_evals', (porz && tdz && prv) ? num(pEval + tEval + schoolEval) : '—');
+      fill('st_evals_dtl', (porz || tdz || prv) ? 'ปอเนาะ ' + num(pEval) + ' · ตาดีกา ' + num(tEval) + ' · รร.เอกชน ' + num(schoolEval) : '—');
 
       if (porz) {
         const pStu = Number(porz.students) || 0, pStaff = Number(porz.staff) || 0;
@@ -169,7 +174,7 @@
       } else {
         fill('metaTadika', 'ไม่สามารถโหลดสถิติตาดีกาได้');
       }
-      fill('metaEvals', 'ปอเนาะ ' + num(pEval) + ' ครั้ง · ตาดีกา ' + num(tEval) + ' ครั้ง รวม ' + num(pEval + tEval) + ' ครั้ง');
+      fill('metaEvals', 'ปอเนาะ ' + num(pEval) + ' ครั้ง · ตาดีกา ' + num(tEval) + ' ครั้ง · รร.เอกชน ' + num(schoolEval) + ' ครั้ง รวม ' + num(pEval + tEval + schoolEval) + ' ครั้ง');
     }
 
     (async function boot() { await loadStats(); })();
